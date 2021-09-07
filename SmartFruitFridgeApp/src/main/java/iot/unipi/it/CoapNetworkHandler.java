@@ -30,7 +30,7 @@ public class CoapNetworkHandler {
     }
 
     public boolean addRipeningNotifier(String ipAddress) {
-        if (clientEthyleneSensorList.size() == 0) {
+        if (clientEthyleneSensorList.size() <= clientRipeningNotifierMap.size()) {
             System.out.println("There is no sensor to associate with the ripeining notifier");
             return false;
         }
@@ -39,7 +39,6 @@ public class CoapNetworkHandler {
         String sensorURI = clientEthyleneSensorList.get(clientEthyleneSensorList.size() - 1).getURI();
         System.out.println("The ripening notifier: [" + ipAddress + "] + is now registered");
         clientRipeningNotifierMap.put(sensorURI, newRipeningNotifier);
-        //ipActuator = ipAddress;
         return true;
     }
 
