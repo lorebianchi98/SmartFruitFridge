@@ -56,7 +56,8 @@ public class CoapNetworkHandler {
 
                         System.out.println(sensorURI + ": Fruit state: " + responseString);
                         toggleRipeningNotifier(responseString, sensorURI);
-                        SmartFridgeDbManager.logFruitState(clientRipeningNotifierMap.get(sensorURI).getURI(), responseString);
+                        if (clientRipeningNotifierMap.get(sensorURI) != null)
+                            SmartFridgeDbManager.logFruitState(clientRipeningNotifierMap.get(sensorURI).getURI(), responseString);
 
                         System.out.println("");
                     }
