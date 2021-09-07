@@ -16,14 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `smart_pool`
+-- Current Database: `smart_fridge`
 --
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `smart_pool` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 USE `smart_fridge`;
 --
--- Table structure for table `hydromassage_actuator`
+-- Table structure for table `ripening_notifier`
 --
 
 DROP TABLE IF EXISTS `ripening_notifier`;
@@ -33,7 +33,7 @@ CREATE TABLE `ripening_notifier` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uri` VARCHAR(80) NOT NULL,  
-  `state` VARCHAR(9) NOT NULL,
+  `state` int(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -45,13 +45,26 @@ public class SmartFridgeDbManager {
     public static void logFruitState(String notifierURI, String state) {
     	
     	String insertQueryStatement = "INSERT INTO ripening_notifier (uri, state) VALUES (?, ?)";
-        
+        int numericState = 0;
         try (Connection smartFridgeConnection = makeJDBCConnection();
         		PreparedStatement smartFridgePrepareStat = smartFridgeConnection.prepareStatement(insertQueryStatement);
            ) {
-        	                
+            //converting the state from string to numeric
+            switch(state) {
+                case "unripe":
+                    numericState = 0;
+                    break;
+                case "ripe":
+                    numericState = 1;
+                    break;
+                case "expired":
+                    numericState = 2;
+                    break;
+                default:
+                    System.out.println("Invalid state! This information will not be saved on the database");
+            }
         	smartFridgePrepareStat.setString(1, notifierURI);
-            smartFridgePrepareStat.setString(2, state);
+            smartFridgePrepareStat.setInt(2, numericState);
         	smartFridgePrepareStat.executeUpdate();
             
         } catch (SQLException sqlex) {
