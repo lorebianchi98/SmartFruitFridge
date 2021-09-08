@@ -88,13 +88,13 @@ public class Collector {
 					}
 				} */else if (tokens[0].equals("!getSensorsList"))
 				{
-					System.out.println("There are " + rs.getNumberOfEthyleneSensors() + " sensor:\n");
+					System.out.println("There are " + rs.getNumberOfEthyleneSensors() + " sensors:\n");
 					rs.stampPresenceSensors();
 					
 				} 
 				else if (tokens[0].equals("!getNotifiersList"))
 				{
-					System.out.println("There are " + rs.getNumberOfRipeningNotifiers() + " sensor:\n");
+					System.out.println("There are " + rs.getNumberOfRipeningNotifiers() + " notifiers:\n");
 					rs.stampRipeningNotifiers();
 					
 				}
