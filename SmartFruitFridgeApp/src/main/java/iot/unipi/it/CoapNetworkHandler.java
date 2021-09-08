@@ -36,7 +36,7 @@ public class CoapNetworkHandler {
         }
 
         CoapClient newRipeningNotifier = new CoapClient("coap://[" + ipAddress + "]/ripening_notifier");
-        String sensorURI = clientEthyleneSensorList.get(clientRipeningNotifierMap.size() - 1).getURI();
+        String sensorURI = clientEthyleneSensorList.get(clientRipeningNotifierMap.size()).getURI();
         System.out.println("The ripening notifier: [" + ipAddress + "] + is now registered");
         clientRipeningNotifierMap.put(sensorURI, newRipeningNotifier);
         return true;
