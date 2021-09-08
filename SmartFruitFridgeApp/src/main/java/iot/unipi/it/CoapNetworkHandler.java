@@ -52,12 +52,12 @@ public class CoapNetworkHandler {
                 new CoapHandler() {
                     public void onLoad(CoapResponse response) {
                         String responseString = response.getResponseText();
-
-                        System.out.println(sensorURI + ": Fruit state: " + responseString);
-                        toggleRipeningNotifier(responseString, sensorURI);
-                        if (clientRipeningNotifierMap.get(sensorURI) != null)
-                            SmartFridgeDbManager.logFruitState(clientRipeningNotifierMap.get(sensorURI).getURI(), responseString);
-
+                        if (responseString.compareTo("") != 0) {
+                            System.out.println(sensorURI + ": Fruit state: " + responseString);
+                            toggleRipeningNotifier(responseString, sensorURI);
+                            if (clientRipeningNotifierMap.get(sensorURI) != null)
+                                SmartFridgeDbManager.logFruitState(clientRipeningNotifierMap.get(sensorURI).getURI(), responseString);
+                        }
                         System.out.println("");
                     }
 
