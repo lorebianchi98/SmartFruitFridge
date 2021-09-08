@@ -16,24 +16,21 @@ EVENT_RESOURCE(ethylene_sensor,
          NULL,
          ethylene_event_handler);
 
-static double ethylene_level = 10.0;
+static double ethylene_level = 0.0;
 static enum State current_state = UNRIPE;
 
 static enum State simulate_sensor(){
 	srand(time(NULL));
 	double variation = (double)(rand() % 100) / 10;
-	//there is a 1/20 probability that the ethylene level decrease
-	if (rand() % 20 != 0)
+	//there is a 1/50 probability that the ethylene level drops to 0 (fruit change)
+	if (rand() % 50 != 0)
 		ethylene_level += variation;
-	else {
-		ethylene_level -= variation * 20;
-		if (ethylene_level < 0)
-			ethylene_level = 0;
-	}
+	else 
+		ethylene_level = 0;
 	
-	if (ethylene_level < 100)
+	if (ethylene_level < 250)
 		return UNRIPE;
-	if (ethylene_level < 200)
+	if (ethylene_level < 400)
 		return RIPE;
 	return EXPIRED;
 }
