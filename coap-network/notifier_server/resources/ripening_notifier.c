@@ -19,6 +19,7 @@ RESOURCE(ripening_notifier,
 
 enum State{UNRIPE, RIPE, EXPIRED};
 enum State current_state = UNRIPE;
+float ethylene_level = 0.0;
 
 static void
 put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
@@ -28,13 +29,14 @@ put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, 
   int success = 1;
 	
   if((len = coap_get_payload(request, &payload))) {
-
-		if(strncmp((char*)payload, "unripe", len) == 0){ 
+		//adapting the color of the led to the state of the fruit
+		ethylene_level = atof((char*)payload);
+		if(ethylene_level < 250){ 
 			current_state = UNRIPE;
 			LOG_INFO("Fruits unripe\n");
 			leds_set(LEDS_NUM_TO_MASK(LEDS_YELLOW));
 		}
-		else if(strncmp((char*)payload, "ripe", len) == 0){ 
+		else if(ethylene_level < 400){ 
 			current_state = RIPE;
 			LOG_INFO("Fruits ripe\n");
 			leds_set(LEDS_NUM_TO_MASK(LEDS_GREEN));
