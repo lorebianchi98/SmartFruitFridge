@@ -15,17 +15,11 @@ public class RegistrationServer extends CoapServer{
         this.add(new RegistrationResource());
     }
 
-    public int getNumberOfEthyleneSensors(){
-        return coapHandler.getNumberOfEthyleneSensors();
-    }
 
     public void stampPresenceSensors() {
         coapHandler.stampEthyleneSensors();
     }
-    
-    public int getNumberOfRipeningNotifiers(){
-        return coapHandler.getNumberOfRipeningNotifiers();
-    }
+
 
     public void stampRipeningNotifiers() {
         coapHandler.stampRipeningNotifiers();
@@ -62,9 +56,9 @@ public class RegistrationServer extends CoapServer{
             boolean success = true;;
 
             if(deviceType.equals("ripening_notifier"))
-                success = coapHandler.deleteRipeningNotifier(ipAddress);
+                success = coapHandler.deleteRipeningNotifier();
             else if(deviceType.equals("ethylene_sensor"))
-                coapHandler.deleteEthyleneSensor(ipAddress);
+                coapHandler.deleteEthyleneSensor();
 
             if(success)
                 exchange.respond(ResponseCode.DELETED, "Cancellation Completed!".getBytes(StandardCharsets.UTF_8));

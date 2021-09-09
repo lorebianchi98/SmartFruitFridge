@@ -15,11 +15,11 @@ import org.eclipse.californium.core.coap.Request;
 
 public class CoapNetworkHandler {
 
-    private List<CoapClient> clientEthyleneSensorList = new ArrayList<CoapClient>();
-    private List<CoapObserveRelation> observeSensorList = new ArrayList<CoapObserveRelation>();
+    private CoapClient clientEthyleneSensor;
+    private CoapObserveRelation observeSensor;
 
     //a map which use as key the URI of the ethylene sensor associated with the actuator
-    private Map<String, CoapClient> clientRipeningNotifierMap = new HashMap<String, CoapClient>();
+    private CoapClient clientRipeningNotifier;
 
     private static CoapNetworkHandler instance = null;
 
@@ -30,15 +30,13 @@ public class CoapNetworkHandler {
     }
 
     public boolean addRipeningNotifier(String ipAddress) {
-        if (clientEthyleneSensorList.size() <= clientRipeningNotifierMap.size()) {
-            System.out.println("There is no sensor to associate with the ripeining notifier " + ipAddress);
+        if (clientRipeningNotifier != null) {
+            System.out.println("There is already a ripening notifier registered");
             return false;
         }
 
-        CoapClient newRipeningNotifier = new CoapClient("coap://[" + ipAddress + "]/ripening_notifier");
-        String sensorURI = clientEthyleneSensorList.get(clientRipeningNotifierMap.size()).getURI();
+        clientRipeningNotifier = new CoapClient("coap://[" + ipAddress + "]/ripening_notifier");
         System.out.println("The ripening notifier: [" + ipAddress + "] + is now registered");
-        clientRipeningNotifierMap.put(sensorURI, newRipeningNotifier);
         return true;
     }
 
@@ -46,9 +44,8 @@ public class CoapNetworkHandler {
     public void addEthyleneSensor(String ipAddress) {
 
         System.out.println("The ethylene sensor: [" + ipAddress + "] + is now registered");
-        CoapClient newEthyleneSensor = new CoapClient("coap://[" + ipAddress + "]/ethylene_sensor");
-        final String sensorURI = newEthyleneSensor.getURI();
-        CoapObserveRelation newObservePresence = newEthyleneSensor.observe(
+        clientEthyleneSensor = new CoapClient("coap://[" + ipAddress + "]/ethylene_sensor");
+        observeSensor = clientEthyleneSensor.observe(
                 new CoapHandler() {
                     public void onLoad(CoapResponse response) {
                         String responseString = response.getResponseText();
@@ -62,9 +59,9 @@ public class CoapNetworkHandler {
                                 state = "ripe";
                             else
                                 state = "expired";
-                            System.out.println(sensorURI + ": Ethylene level: " + ethylene_level + ", fruit state: " + state);
-                            toggleRipeningNotifier(responseString, sensorURI);
-                            if (clientRipeningNotifierMap.get(sensorURI) != null)
+                            System.out.println("Ethylene level: " + ethylene_level + ", fruit state: " + state);
+                            toggleRipeningNotifier(responseString);
+                            if (clientRipeningNotifier != null)
                                 SmartFridgeDbManager.logFruitState(ethylene_level);
                         }
                         System.out.println("");
@@ -74,16 +71,12 @@ public class CoapNetworkHandler {
                         System.err.println("OBSERVING FAILED");
                     }
                 });
-
-        clientEthyleneSensorList.add(newEthyleneSensor);
-        observeSensorList.add(newObservePresence);
     }
 
 
-    private void toggleRipeningNotifier(String state, String sensorURI) {
-        final CoapClient ripeningNotifier = clientRipeningNotifierMap.get(sensorURI);
-        if(ripeningNotifier != null) {
-            ripeningNotifier.put(new CoapHandler() {
+    private void toggleRipeningNotifier(String responseString) {
+        if(clientRipeningNotifier != null) {
+            clientRipeningNotifier.put(new CoapHandler() {
 
                 public void onLoad(CoapResponse response) {
                     if (response != null) {
@@ -93,68 +86,51 @@ public class CoapNetworkHandler {
                 }
 
                 public void onError() {
-                    System.err.println("[ERROR: RipeningNotifier " + ripeningNotifier.getURI() + "] ");
+                    System.err.println("[ERROR: RipeningNotifier " + clientRipeningNotifier.getURI() + "] ");
                 }
 
-            }, state, MediaTypeRegistry.TEXT_PLAIN);
+            }, responseString, MediaTypeRegistry.TEXT_PLAIN);
         }
         else
-            System.out.println("The sensor " + sensorURI + " is not associated with any ripening notifier");
+            System.out.println("There is no ripening notifier associated");
     }
 
     public void cutAllConnection() {
-        for(CoapObserveRelation relationToCancel: observeSensorList)
-            relationToCancel.proactiveCancel();
+        observeSensor.proactiveCancel();
     }
 
 
-    public boolean deleteRipeningNotifier(String ipAddress) {
-        for(Map.Entry<String, CoapClient> entry : clientRipeningNotifierMap.entrySet()) {
-            String key = entry.getKey();
-            CoapClient ripeningNotifier = entry.getValue();
-
-            if (ripeningNotifier.getURI().equals(ipAddress)) {
-                clientRipeningNotifierMap.remove(key);
-                return true;
-            }
-        }
-        return false;
+    public boolean deleteRipeningNotifier() {
+        if (clientRipeningNotifier == null)
+            return false;
+        clientRipeningNotifier = null;
+        return true;
     }
 
 
 
-    public boolean deleteEthyleneSensor(String ipAddress) {
-        for(int i = 0; i < clientEthyleneSensorList.size(); i++)
-            if(clientEthyleneSensorList.get(i).getURI().equals(ipAddress)) {
-                clientEthyleneSensorList.remove(i);
-                observeSensorList.get(i).proactiveCancel();
-                observeSensorList.remove(i);
-                return true;
-            }
-        return false;
-
+    public boolean deleteEthyleneSensor() {
+        if (clientEthyleneSensor == null)
+            return false;
+        clientEthyleneSensor = null;
+        return true;
     }
 
-    public int getNumberOfEthyleneSensors() {
-        return clientEthyleneSensorList.size();
-    }
+
 
     public void stampEthyleneSensors() {
-        for(CoapClient cc: clientEthyleneSensorList)
-            System.out.println("> " + cc.getURI() + "\n");
+        if (clientEthyleneSensor != null)
+            System.out.println("> " + clientEthyleneSensor + "\n");
+        else
+            System.out.println("There is no sensor registered" + '\n');
     }
-    
-    public int getNumberOfRipeningNotifiers() {
-        return clientRipeningNotifierMap.size();
-    }
+
 
     public void stampRipeningNotifiers() {
-        for(Map.Entry<String, CoapClient> entry : clientRipeningNotifierMap.entrySet()) {
-            String ipSensor = entry.getKey();
-            CoapClient cc = entry.getValue();
-
-            System.out.println("> " + cc.getURI() + " associated with sensor: " + ipSensor);
-        }
+        if (clientRipeningNotifier != null)
+            System.out.println("> " + clientRipeningNotifier.getURI() + '\n');
+        else
+            System.out.println("There is no notifier registered" + '\n');
     }
 
 
