@@ -32,8 +32,7 @@ DROP TABLE IF EXISTS `ripening_notifier`;
 CREATE TABLE `ripening_notifier` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `uri` VARCHAR(80) NOT NULL,  
-  `state` int(2) NOT NULL,
+  `ethylene_level` float(30) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

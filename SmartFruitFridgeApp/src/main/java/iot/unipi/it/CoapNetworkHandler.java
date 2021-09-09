@@ -53,10 +53,19 @@ public class CoapNetworkHandler {
                     public void onLoad(CoapResponse response) {
                         String responseString = response.getResponseText();
                         if (responseString.compareTo("") != 0) {
-                            System.out.println(sensorURI + ": Fruit state: " + responseString);
+                            float ethylene_level = Float.parseFloat(responseString);
+                            String state;
+                            //printing the state of the fruit based on the ethylene level
+                            if (ethylene_level < 250)
+                                state = "unripe";
+                            else if (ethylene_level < 400)
+                                state = "ripe";
+                            else
+                                state = "expired";
+                            System.out.println(sensorURI + ": Ethylene level: " + ethylene_level + ", fruit state: " + state);
                             toggleRipeningNotifier(responseString, sensorURI);
                             if (clientRipeningNotifierMap.get(sensorURI) != null)
-                                SmartFridgeDbManager.logFruitState(clientRipeningNotifierMap.get(sensorURI).getURI(), responseString);
+                                SmartFridgeDbManager.logFruitState(ethylene_level);
                         }
                         System.out.println("");
                     }
