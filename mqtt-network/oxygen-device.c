@@ -69,8 +69,8 @@ static char client_id[BUFFER_SIZE];
 static char pub_topic[BUFFER_SIZE];
 static char sub_topic[BUFFER_SIZE];
 
-static int oxygen_level = 0.21;
-static bool oxygen_emitter = true;
+static int oxygen_level = 210;
+static bool oxygen_emitter = false;
 
 // Periodic timer to check the state of the MQTT client
 #define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
@@ -120,12 +120,12 @@ pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
 
 static void simulate_oxygen_change(){
 	// oxygen emitter ON -> oxygen rises
-	// oxygen emitter OFF -> 1/5 oxygen drops
+	// oxygen emitter OFF -> 3/10 oxygen drops
 	if(oxygen_emitter){
-		oxygen_level += 0.015;
+		oxygen_level ++;
 	} else {
-		if((rand()%10) < 2)
-			oxygen_level -= 0.0275;
+		if((rand()%10) < 3)
+			oxygen_level --;
 	}	
 }
 
@@ -261,7 +261,7 @@ PROCESS_THREAD(mqtt_client_process, ev, data)
 			  
 			  simulate_oxygen_change();
 			  
-			  sprintf(app_buffer, "{\"oxygen\": %d, \"unit\": \"percentage\", \"oxygen-emitter\": %d}",
+			  sprintf(app_buffer, "{\"oxygen\": %d, \"unit\": \"ppt\", \"oxygen-emitter\": %d}",
 					oxygen_level, oxygen_emitter);
 
 			  mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,

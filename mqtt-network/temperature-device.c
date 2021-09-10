@@ -68,9 +68,9 @@ static char client_id[BUFFER_SIZE];
 static char pub_topic[BUFFER_SIZE];
 static char sub_topic[BUFFER_SIZE];
 
-// Chiller is OFF at the beginning and Temperature is 10 °C
-static int fridge_temperature = 10;
-static bool chiller = false;
+// Chiller is ON at the beginning and Temperature is 0 °C
+static int fridge_temperature = 0;
+static bool chiller = true;
 
 // Periodic timer to check the state of the MQTT client
 #define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
