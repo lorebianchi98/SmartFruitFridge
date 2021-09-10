@@ -48,27 +48,7 @@ public class CoapNetworkHandler {
         observeSensor = clientEthyleneSensor.observe(
                 new CoapHandler() {
                     public void onLoad(CoapResponse response) {
-                        try {
-                            String responseString = response.getResponseText();
-                            if (responseString.compareTo("") != 0) {
-                                float ethylene_level = Float.parseFloat(responseString);
-                                String state;
-                                //printing the state of the fruit based on the ethylene level
-                                if (ethylene_level < 250)
-                                    state = "unripe";
-                                else if (ethylene_level < 400)
-                                    state = "ripe";
-                                else
-                                    state = "expired";
-                                System.out.println("Ethylene level: " + ethylene_level + ", fruit state: " + state);
-                                toggleRipeningNotifier(responseString);
-                                if (clientRipeningNotifier != null)
-                                    SmartFridgeDbManager.logFruitState(ethylene_level);
-                            }
-                        } catch (Exception e){
-                            System.err.println("The message received was not valid");
-                        }
-                        System.out.println("");
+                        handleEthyleneResponse(response);
                     }
 
                     public void onError() {
@@ -78,7 +58,34 @@ public class CoapNetworkHandler {
     }
 
     public void checkEthyleneLevel(){
-        clientEthyleneSensor.get();
+        if (clientEthyleneSensor != null) {
+            CoapResponse response = clientEthyleneSensor.get();
+            handleEthyleneResponse(response);
+        }
+    }
+
+    public void handleEthyleneResponse(CoapResponse response){
+        try {
+            String responseString = response.getResponseText();
+            if (responseString.compareTo("") != 0) {
+                float ethylene_level = Float.parseFloat(responseString);
+                String state;
+                //printing the state of the fruit based on the ethylene level
+                if (ethylene_level < 250)
+                    state = "unripe";
+                else if (ethylene_level < 400)
+                    state = "ripe";
+                else
+                    state = "expired";
+                System.out.println("Ethylene level: " + ethylene_level + ", fruit state: " + state);
+                toggleRipeningNotifier(responseString);
+                if (clientRipeningNotifier != null)
+                    SmartFridgeDbManager.logFruitState(ethylene_level);
+            }
+        } catch (Exception e){
+            System.err.println("The message received was not valid");
+        }
+        System.out.println("");
     }
 
 
