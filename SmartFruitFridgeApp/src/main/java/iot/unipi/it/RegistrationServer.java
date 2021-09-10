@@ -15,14 +15,17 @@ public class RegistrationServer extends CoapServer{
         this.add(new RegistrationResource());
     }
 
+    public void checkEthyleneLevel() {
+        coapHandler.checkEthyleneLevel();
+    }
 
-    public void stampPresenceSensors() {
-        coapHandler.stampEthyleneSensors();
+    public void stampPresenceSensor() {
+        coapHandler.stampEthyleneSensor();
     }
 
 
-    public void stampRipeningNotifiers() {
-        coapHandler.stampRipeningNotifiers();
+    public void stampRipeningNotifier() {
+        coapHandler.stampRipeningNotifier();
     }
 
     class RegistrationResource extends CoapResource{

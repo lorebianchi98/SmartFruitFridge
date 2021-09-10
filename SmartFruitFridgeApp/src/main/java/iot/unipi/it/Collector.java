@@ -20,15 +20,12 @@ public class Collector {
 		String[] tokens;
 		
 		System.out.println("\nCommand list:");
+		System.out.println("Command list:");
 		System.out.println("!exit: exit the program");
-		System.out.println("!commands: list possible commands");					
-		System.out.println("!checkTemp: get current average temperature");
-		System.out.println("!setTemp <lower temperature> <upper temperature> <unit[C or F]>: set desired temperature bounds");
-		System.out.println("!checkCl: get current average chlorine level");
-		System.out.println("!setCl <lower level> <upper level>: set desired chlorine level bounds");
-		System.out.println("!setPowerHydro <new power>: set power between 1 and 10");
-		System.out.println("!getSensorsList: show the list of all sensors available");
-		System.out.println("!getNotifiersList: show the list of all notifierss available");
+		System.out.println("!commands: list possible commands");
+		System.out.println("!checkEthylene: get current level of ethylene");
+		System.out.println("!getSensor: get sensor information");
+		System.out.println("!getNotifier: get notifier information");
 		System.out.println("\n");
 		
 		while(true) {
@@ -39,62 +36,32 @@ public class Collector {
 				if (tokens[0].equals("!exit")) 
 				{
 					System.exit(1);
-				} else if (tokens[0].equals("!commands")) 
-				{
+				} else if (tokens[0].equals("!commands")) {
 					System.out.println("Command list:");
 					System.out.println("!exit: exit the program");
-					System.out.println("!commands: list possible commands");					
-					System.out.println("!checkTemp: get current average temperature");
-					System.out.println("!setTemp <lower temperature> <upper temperature> <unit[C or F]>: set desired temperature bounds");
-					System.out.println("!checkCl: get current average chlorine level");
-					System.out.println("!setCl <lower level> <upper level>: set desired chlorine level bounds");
-					System.out.println("!setPowerHydro <new power>: set power between 1 and 10");
-					System.out.println("!getSensorsList: show the list of all sensors available");
-					System.out.println("!getNotifiersList: show the list of all notifierss available");
-					
-					
-				} /*else if (tokens[0].equals("!checkTemp"))
-				{
-					System.out.format("The temperature in the pool is of %f °C", tc.getAverageTemperature());
-					
-				} else if (tokens[0].equals("!setTemp"))
-				{
-					tc.setTemperatureBounds(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]), tokens[3]);
-					
-				} else if (tokens[0].equals("!checkCl")) 
-				{
-					System.out.format("The chlorine level in the pool is of %f ppb", cc.getAverageChlorine());
-					
-				} else if (tokens[0].equals("!setCl"))
-				{
-					cc.setChlorineBounds(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
-					
-				} else if (tokens[0].equals("!setPowerHydro")) 
-				{
-					int power;
+					System.out.println("!commands: list possible commands");
+					System.out.println("!checkEthylene: get current level of ethylene");
+					System.out.println("!getSensor: get sensor information");
+					System.out.println("!getNotifier: get notifier information");
 
-					try {
-						power = Integer.parseInt(tokens[1]);
-					}catch (Exception ex) {
-						System.out.println("Insert a correct power");
-						continue;
-					}
-					
-					if(power > 10 || power < 1)
-						System.out.println("Not valid range of power");
-					else {
-						System.out.println("Power update");	
-						rs.updatePower(power);
-					}
-				} */else if (tokens[0].equals("!getSensorsList"))
+				}
+				else if (tokens[0].equals("!checkEthylene"))
 				{
-					rs.stampPresenceSensors();
+					rs.checkEthyleneLevel();
+				}
+				else if (tokens[0].equals("!getSensor"))
+				{
+					rs.stampPresenceSensor();
 					
 				} 
-				else if (tokens[0].equals("!getNotifiersList"))
+				else if (tokens[0].equals("!getNotifier"))
 				{
-					rs.stampRipeningNotifiers();
+					rs.stampRipeningNotifier();
 					
+				}
+				else
+				{
+					System.out.println("Invalid command");
 				}
 
 				System.out.println("\n");
