@@ -80,7 +80,7 @@ public class CoapNetworkHandler {
                 System.out.println("Ethylene level: " + ethylene_level + ", fruit state: " + state);
                 toggleRipeningNotifier(responseString);
                 if (clientRipeningNotifier != null)
-                    SmartFridgeDbManager.logFruitState(ethylene_level);
+                    SmartFridgeDB.logFruitState(ethylene_level);
             }
         } catch (Exception e){
             System.err.println("The message received was not valid");

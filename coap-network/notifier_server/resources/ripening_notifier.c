@@ -29,20 +29,25 @@ put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, 
   int success = 1;
 	
   if((len = coap_get_payload(request, &payload))) {
+		char data[20];
+		strncpy(data, (char*)payload, len);	
+		data[len] = '\0';	
+		LOG_INFO("Received the message: %s", data);
 		//adapting the color of the led to the state of the fruit
-		ethylene_level = atof((char*)payload);
+		ethylene_level = atof(data);
+		LOG_INFO("Ethylene level: %f", ethylene_level);
 		if(ethylene_level < 250){ 
 			current_state = UNRIPE;
-			LOG_INFO("Fruits unripe\n");
+			LOG_INFO("Ethylene level: %f, fruits unripe\n", ethylene_level);
 			leds_set(LEDS_NUM_TO_MASK(LEDS_YELLOW));
 		}
 		else if(ethylene_level < 400){ 
 			current_state = RIPE;
-			LOG_INFO("Fruits ripe\n");
+			LOG_INFO("Ethylene level: %f, fruits ripe\n", ethylene_level);
 			leds_set(LEDS_NUM_TO_MASK(LEDS_GREEN));
 		}else{
 			current_state = EXPIRED;
-			LOG_INFO("Fruits expired\n");
+			LOG_INFO("Ethylene level: %f, fruits expired\n", ethylene_level);
 			leds_set(LEDS_NUM_TO_MASK(LEDS_RED));
 		}
 

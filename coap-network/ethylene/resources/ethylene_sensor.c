@@ -28,6 +28,7 @@ static enum State simulate_sensor(){
 	else 
 		ethylene_level = 0;
 	
+
 	if (ethylene_level < 250)
 		return UNRIPE;
 	if (ethylene_level < 400)
@@ -38,15 +39,18 @@ static enum State simulate_sensor(){
 static void
 get_ethylene_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
-	char* message = NULL;
-  
-	printf("Received a get");
+	char message[30];
+	char *data = NULL;
 
 	//converting the level of ethylene in string
-	gcvt(ethylene_level, 10, message);
+	//gcvt(ethylene_level, 5, message);
+	sprintf(message, "%g", ethylene_level);
+	data =	&message[0];
+	printf("message: %s, length of the message: %d\n", message, strlen(message));
+	printf("data: %s, length of the data: %d\n", data, strlen(data));
   
 	coap_set_header_content_format(response, TEXT_PLAIN);
-	coap_set_payload(response, message, strlen(message));
+	coap_set_payload(response, data, strlen(data));
 }
 
 
@@ -59,13 +63,13 @@ ethylene_event_handler(void)
 	current_state = sensed_state;
 	switch (current_state) {
 		case UNRIPE:
-			printf("Fruits unripe\n");
+			printf("Ethylene level: %f, fruits unripe\n", ethylene_level);
 			break;
 		case RIPE:
-			printf("Fruits ripe\n");
+			printf("Ethylene level: %f, fruits ripe\n", ethylene_level);
 			break;
 		case EXPIRED:
-			printf("Fruits expired\n");
+			printf("Ethylene level: %f, fruits expired\n", ethylene_level);
 			break;
 	}
     //When the state change the ethylene level sensed is sent to the ripening notifier, that will change its led
