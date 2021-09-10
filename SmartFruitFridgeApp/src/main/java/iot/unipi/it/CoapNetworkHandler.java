@@ -50,6 +50,7 @@ public class CoapNetworkHandler {
                     public void onLoad(CoapResponse response) {
                         String responseString = response.getResponseText();
                         if (responseString.compareTo("") != 0) {
+                            System.out.println("Stringa ricevuta: " + responseString);
                             float ethylene_level = Float.parseFloat(responseString);
                             String state;
                             //printing the state of the fruit based on the ethylene level
@@ -120,7 +121,7 @@ public class CoapNetworkHandler {
 
     public void stampEthyleneSensors() {
         if (clientEthyleneSensor != null)
-            System.out.println("> " + clientEthyleneSensor + "\n");
+            System.out.println("> " + clientEthyleneSensor.getURI() + "\n");
         else
             System.out.println("There is no sensor registered" + '\n');
     }
