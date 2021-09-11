@@ -1,1 +1,1 @@
-# SmartFruitFridge Lykogiannis
+# SmartFruitFridge
